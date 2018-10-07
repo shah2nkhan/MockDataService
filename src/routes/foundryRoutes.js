@@ -1,6 +1,7 @@
 const express = require('express');
 const debug = require('debug')('app:foundryRoutes');
 const fs = require("fs");
+const path = require('path');
 
 const foundryRouter = express.Router();
 
@@ -15,16 +16,15 @@ foundryRouter.route('/').get(
 );
 
 foundryRouter.route('/data').get(
+    
     (req, res) => {
-        (async function sendResponse() {
-            res.writeHead(200, {
-                'Content-Type': 'text/xml',
-                'Transfer-Encoding': 'chunked'
-              })
-            fs.createReadStream("../response/foundryData.xml").pipe(res);
-            res.end();
-            
-        }());
+        const parentDir = path.dirname(module.parent.filename);
+        debug(parentDir);
+        fs.readFile(path.join(parentDir, 'response/foundryData.xml'), 'utf8', function (err, data) {
+            if (err) throw err;
+            res.send(data);
+        }); 
+
 
     }
 );
