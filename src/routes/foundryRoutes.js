@@ -1,4 +1,6 @@
 const express = require('express');
+const debug = require('debug')('app:foundryRoutes');
+const fs = require("fs");
 
 const foundryRouter = express.Router();
 
@@ -8,14 +10,23 @@ foundryRouter.route('/').get(
         setTimeout(() => {
             res.send('hello foundry Pivot');
         }, 2000);
-     //  res.send('hello foundry Pivot');
+        //  res.send('hello foundry Pivot');
     }
-  );
-  
-  foundryRouter.route('/data').get(
+);
+
+foundryRouter.route('/data').get(
     (req, res) => {
-      res.send('hello foundry Pivot data');
+        (async function sendResponse() {
+            res.writeHead(200, {
+                'Content-Type': 'text/xml',
+                'Transfer-Encoding': 'chunked'
+              })
+            fs.createReadStream("../response/foundryData.xml").pipe(res);
+            res.end();
+            
+        }());
+
     }
-  );
+);
 
 module.exports = foundryRouter;

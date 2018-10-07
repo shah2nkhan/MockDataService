@@ -3,11 +3,15 @@ const chalk = require('chalk');
 const debug = require('debug')('app');
 const morgan = require('morgan');
 const path = require('path');
-var delay = require('express-delay');
+var bodyParser = require('body-parser');
 
 const port = process.env.PORT || 12121;
 const app = express();
 const foundryRouter = require('./src/routes/foundryRoutes');
+
+
+//app.use(bodyParser.xm());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(morgan('tiny'));
 app.use(express.static(path.join(__dirname, '/public/')));
