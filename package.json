@@ -1,0 +1,40 @@
+{
+  "name": "dataservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set DEBUG=* & nodemon app",
+    "lint": "eslint app.js"
+  },
+  "author": "Shanky",
+  "license": "NatwestMarkets",
+  "dependencies": {
+    "chalk": "2.4.1",
+    "compression": "^1.7.3",
+    "debug": "2.6.9",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "express-delay": "^0.2.0",
+    "morgan": "1.9.1",
+    "nodemon": "^1.18.4",
+    "pug": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  },
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500",
+    "env": {
+      "NODE_ENV": "development",
+      "PORT": 12121
+    }
+  }
+}
