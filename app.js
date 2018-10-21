@@ -3,15 +3,19 @@ const chalk = require('chalk');
 const debug = require('debug')('app');
 const morgan = require('morgan');
 const path = require('path');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
+const compression = require('compression')
+
+
 
 const port = process.env.PORT || 12121;
 const app = express();
+app.use(compression());
 const foundryRouter = require('./src/routes/foundryRoutes');
-
-
 //app.use(bodyParser.xm());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 app.use(morgan('tiny'));
 app.use(express.static(path.join(__dirname, '/public/')));
@@ -33,7 +37,7 @@ app.get('/', (req, res) => {
         title: 'Rates Service',
       },
       {
-        link: './RatesDocStore',
+        link: './RatesDoc',
         title: 'Rates Doc Store',
       },
     ],
@@ -46,4 +50,3 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   debug(`listening on port ${chalk.green(port)}`);
 });
-
