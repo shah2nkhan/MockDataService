@@ -15,34 +15,35 @@ app.set('views', './src/views');
 app.set('view engine', 'ejs');
 
 app.use(compression());
+// bodyParser = {
+//   json: {limit: '50mb', extended: true},
+//   urlencoded: {limit: '50mb', extended: true},
+//   text:{limit:'50mb', extended: true}
+// };
 //app.use(bodyParser.text({ type: 'text/html' }));
-app.use(bodyParser.text({ type: 'text/xml' }));
+app.use(bodyParser.text({ type: 'text/xml',limit: '50mb' , extended: true}));
 //app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }));
-app.use(bodyParser.json({ type: 'application/json' }));
+app.use(bodyParser.json({ type: 'application/json', limit: '50mb', extended: true }));
 app.use(bodyParser.urlencoded({
+  limit:'50mb',
   extended: false
 }));
 
+const redisConfig = {
+  host: process.env.REDISHOST ||'127.0.0.1',
+  port: process.env.REDISPORT || 6380,
+};
 
+
+const dataFolderPath =  path.join(__dirname,'response');
+debug(`path as ${dataFolderPath}`);
 const foundryRouter = require('./src/routes/foundryRoutes');
-const redisClient = require('./src/services/redisClient');
-const { dataBuilderRouter } = require('./src/routes/dataBuilderRoutes')(redisClient);
+const { client } = require('./src/services/redisClient')(redisConfig, dataFolderPath);
+const { dataBuilderRouter } = require('./src/routes/dataBuilderRoutes')(client);
 
 app.use('/pivot', foundryRouter);
 app.use('/sessions', foundryRouter);
 app.use('/cache', dataBuilderRouter);
-app.route('/testdata').get(
-
-  (req, res) => {
-    debug('got request for redis cache');
-    redisClient.get('testdata', function(error, result) {
-          if (error) throw error;
-          res.send(result);
-        });
-
-  }
-);
-
 
 app.get('/', (req, res) => {
   res.render('index', {
@@ -59,14 +60,16 @@ app.get('/', (req, res) => {
         link: './RatesDoc',
         title: 'Rates Doc Store',
       },
+      {
+        link: './Cache',
+        title: 'Cache',
+      },
     ],
   });
 
   // res.sendFile(path.join(__dirname, 'views', 'index.html'));
 
 });
-
-
 
 
 app.listen(port, () => {
