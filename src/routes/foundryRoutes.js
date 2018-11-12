@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const foundryRouter = express.Router();
 const zlib = require('zlib');
-
 const gzip = zlib.createGzip();
 foundryRouter.route('/data').get(
 
@@ -27,6 +26,10 @@ foundryRouter.route('/data').get(
 );
 
 
+
+
+
+
 foundryRouter.route('/').get(
     (req, res) => {
         setTimeout(() => {
@@ -35,6 +38,7 @@ foundryRouter.route('/').get(
         //  res.send('hello foundry Pivot');
     }
 );
+
 
 
 module.exports = foundryRouter;
