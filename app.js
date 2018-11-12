@@ -32,11 +32,28 @@ app.use(bodyParser.urlencoded({
 const redisConfig = {
   host: process.env.REDISHOST ||'127.0.0.1',
   port: process.env.REDISPORT || 6380,
+  retry_strategy: function (options) {
+    if (options.error && options.error.code === 'ECONNREFUSED') {
+        // End reconnecting on a specific error and flush all commands with
+        // a individual error
+        return new Error('The server refused the connection');
+    }
+    if (options.total_retry_time > 1000 * 60 * 60) {
+        // End reconnecting after a specific timeout and flush all commands
+        // with a individual error
+        return new Error('Retry time exhausted');
+    }
+    if (options.attempt > 100000) {
+        // End reconnecting with built in error
+        return undefined;
+    }
+    // reconnect after
+    return Math.min(options.attempt * 1000, 3000);
+}
 };
 
 
 const dataFolderPath =  path.join(__dirname,'response');
-debug(`path as ${dataFolderPath}`);
 const foundryRouter = require('./src/routes/foundryRoutes');
 const { client } = require('./src/services/redisClient')(redisConfig, dataFolderPath);
 const { dataBuilderRouter } = require('./src/routes/dataBuilderRoutes')(client);
