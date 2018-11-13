@@ -5,8 +5,7 @@ const redis = require('redis');
 
 const dataClientProvider = (config,dataPath)=>
 {
-
-var client = redis.createClient(config );
+var client = redis.createClient(config);
 client.on('error', (err) => {
 //   setTimeout(()=>{
 //       client=redis.createClient(config);}
